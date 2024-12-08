@@ -70,10 +70,10 @@ This tool was developed as part of a master's thesis project focusing on bridgin
 
 ```bibtex
 @mastersthesis{belianina,
-  title={Object-Centric Process Mining for Software Repository Analysis},
-  author={Your Name},
+  title={An Object-centric View of Git Commit Logs: Extraction and Analysis},
+  author={Belianina, Elizaveta},
   year={2024},
-  school={Your University}
+  school={RWTH Aachen}
 }
 ```
 
