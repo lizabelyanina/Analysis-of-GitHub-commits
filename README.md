@@ -35,18 +35,12 @@ cd repository-analysis-tool
 pip install -r requirements.txt
 ```
 
-3. Set up the model:
-```bash
-# Download the fine-tuned DistilBERT model
-# [Instructions for model download/setup]
-```
-
-4. Run the application:
+3. Run the application:
 ```bash
 python app.py
 ```
 
-5. Open your browser and navigate to `http://localhost:5001`
+4. Open your browser and navigate to `http://localhost:5001`
 
 ## 📊 Analysis Outputs
 
@@ -66,10 +60,6 @@ The tool generates several types of insights:
   - Activity distributions
   - Contributor distributions
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
-
 ## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -79,7 +69,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 This tool was developed as part of a master's thesis project focusing on bridging repository mining and object-centric process mining. If you use this tool in academic work, please cite:
 
 ```bibtex
-@mastersthesis{your_citation_here,
+@mastersthesis{belianina,
   title={Object-Centric Process Mining for Software Repository Analysis},
   author={Your Name},
   year={2024},
@@ -89,7 +79,7 @@ This tool was developed as part of a master's thesis project focusing on bridgin
 
 ## 📞 Contact
 
-For questions or support, please open an issue in the GitHub repository or contact [your-email@example.com].
+For questions or support, please open an issue in the GitHub repository or contact elizabethbelyanina@gmail.com.
 
 ## ⚠️ Limitations
 
