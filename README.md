@@ -26,8 +26,8 @@ A web-based tool that turns GitHub repository data into rich process mining insi
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/repository-analysis-tool
-cd repository-analysis-tool
+git clone https://github.com/lizabelyanina/Analysis-of-GitHub-commits
+cd Analysis-of-GitHub-commits
 ```
 
 2. Install dependencies:
