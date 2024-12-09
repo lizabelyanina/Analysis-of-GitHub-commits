@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for character encoding and viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title -->
+    <title>GitHub Commit Analyzer</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts for Avenir-like fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom styles with Pantone Very Peri color scheme and Avenir -->
+    <style>
+        @font-face {
+            font-family: 'Avenir';
+            src: local('Avenir-Book'),
+                 local('Avenir Book'),
+                 url('path/to/Avenir-Book.woff2') format('woff2'),
+                 url('path/to/Avenir-Book.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --very-peri: #6667AB;  /* Pantone Very Peri */
+            --very-peri-light: #8B8CC7;
+            --very-peri-dark: #4B4D85;
+            --gray-background: #F5F5F5;
+            --text-color: #333333;
+        }
+
+        body {
+            background-color: var(--gray-background);
+            color: var(--text-color);
+            font-family: 'Avenir', 'Nunito Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            color: var(--very-peri-dark);
+            font-weight: 600;
+            border-bottom: 2px solid var(--very-peri-light);
+            padding-bottom: 10px;
+            font-family: 'Avenir', 'Nunito Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        p, label, input, table, ul, li {
+            font-family: 'Avenir', 'Nunito Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .btn-primary {
+            background-color: var(--very-peri);
+            border-color: var(--very-peri-dark);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--very-peri-dark);
+            border-color: var(--very-peri);
+        }
+
+        .form-control {
+            border-color: var(--very-peri-light);
+            focus-border-color: var(--very-peri);
+            font-family: 'Avenir', 'Nunito Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--very-peri);
+            border-color: var(--very-peri-dark);
+        }
+
+        .table {
+            border-top: 3px solid var(--very-peri);
+        }
+
+        .table thead {
+            background-color: var(--very-peri-light);
+            color: white;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(102, 103, 171, 0.05);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .plot-container {
+            text-align: center;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .plot-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .authors-list {
+            background-color: white;
+            border: 1px solid var(--very-peri-light);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .list-group-item {
+            border-color: var(--very-peri-light);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin-top: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container -->
+    <div class="container mt-5">
+        <!-- Page header -->
+        <h1>Github commits as an object-centric event log</h1>
+        <p>This application analyzes GitHub repositories and generates an object-centric event log based on the commit history. Enter a public GitHub repository URL to get started.</p>
+        
+        <!-- Input form -->
+        <form method="POST">
+            <div class="mb-3">
+                <label for="user_input" class="form-label">Enter the GitHub link:</label>
+                <input type="text" class="form-control" id="user_input" name="user_input" required>
+            </div>
+            <!-- Checkbox for conventional commit standard -->
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="conventional" name="checkbox" value="is conventional">
+                <label class="form-check-label" for="conventional">This repo follows the conventional commit standard</label>
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="save_locally" name="save_locally">
+                <label class="form-check-label" for="save_locally">Save results locally</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        
+        <!-- Display user input if available -->
+        {% if user_input %}
+            <p class="mt-3">You entered: {{ user_input }}</p>
+        {% endif %}
+        
+        <!-- Display result if available -->
+        {% if result %}
+            <p class="mt-3">Result:</p>
+            <pre>{{ result }}</pre>
+        {% endif %}
+        
+        <!-- Download files if available -->
+        {% if download_links %}
+            <h3>Download Files:</h3>
+            <ul>
+                {% for filename, link in download_links %}
+                    <li><a href="{{ link }}">Download {{ filename }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <!-- Display plots if available -->
+        {% if plots %}
+            <h2 class="mt-5">Repository Statistics</h2>
+            {% for plot in plots %}
+                <div class="plot-container">
+                    <img src="data:image/png;base64,{{ plot }}" alt="Repository Statistics Plot" class="img-fluid">
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Display contributor analysis if available -->
+        {% if contributor_data %}
+            <h2 class="mt-5">Contributor Analysis</h2>
+            <h3>Top 5 Contributors</h3>
+            <ul>
+            {% for email, commits in contributor_data.top_contributors.items() %}
+                <li>{{ email }}: {{ commits }} commits</li>
+            {% endfor %}
+            </ul>
+            <h3>Contributor Clustering</h3>
+            <div class="plot-container">
+                <img src="data:image/png;base64,{{ contributor_data.cluster_plot }}" alt="Contributor Clustering" class="img-fluid">
+            </div>
+            <h3>Cluster Summary</h3>
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Cluster ID</th>
+                            <th>Number of Authors</th>
+                            <th>Total Commits</th>
+                            <th>Average Commits</th>
+                            <th>Total Files Edited</th>
+                            <th>Avg Files per Author</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for cluster in contributor_data.cluster_summary %}
+                        <tr>
+                            <td>{{ cluster['Cluster ID'] }}</td>
+                            <td>{{ cluster['Number of Authors'] }}</td>
+                            <td>{{ cluster['Total Commits'] }}</td>
+                            <td>{{ cluster['Average Commits'] }}</td>
+                            <td>{{ cluster['Total Files Edited'] }}</td>
+                            <td>{{ cluster['Avg Files per Author'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <h3>All Authors</h3>
+            <div class="authors-list" style="max-height: 200px; overflow-y: auto;">
+                <ul>
+                {% for author in contributor_data.all_authors %}
+                    <li>{{ author }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            <h3 class="mt-5">Collaboration Network (Most Active Contributors)</h3>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="plot-container">
+                        <img src="data:image/png;base64,{{ contributor_data.network_plot }}" alt="Author Collaboration Network" class="img-fluid">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h4>Network Metrics</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">Number of Authors: {{ contributor_data.network_metrics.num_authors }}</li>
+                        <li class="list-group-item">Number of Connections: {{ contributor_data.network_metrics.num_connections }}</li>
+                        <li class="list-group-item">Average Connections per Author: {{ "%.2f"|format(contributor_data.network_metrics.avg_connections) }}</li>
+                        <li class="list-group-item">Network Density: {{ "%.3f"|format(contributor_data.network_metrics.density) }}</li>
+                        <li class="list-group-item">Connected Components: {{ contributor_data.network_metrics.connected_components }}</li>
+                        <li class="list-group-item">Average Clustering Coefficient: {{ "%.3f"|format(contributor_data.network_metrics.avg_clustering) }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+                <!-- Display file analysis if available -->
+        {% if file_analysis %}
+            <h2 class="mt-5">File Analysis</h2>
+            
+            <!-- File Statistics Overview -->
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>File Lifecycle Duration</h3>
+                    <div class="plot-container">
+                        <img src="data:image/png;base64,{{ file_analysis.lifecycle_duration_plot }}" alt="File Lifecycle Duration" class="img-fluid">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3>Contributors per File Distribution</h3>
+                    <div class="plot-container">
+                        <img src="data:image/png;base64,{{ file_analysis.file_contributors_distribution }}" alt="Contributors per File Distribution" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity Analysis -->
+            <h3 class="mt-5">Activity Breakdown for Most Edited Files</h3>
+            <div class="plot-container">
+                <img src="data:image/png;base64,{{ file_analysis.activity_breakdown_plot }}" alt="File Activity Breakdown" class="img-fluid">
+            </div>
+            
+            <h3 class="mt-4">Top 20 Most Edited Files</h3>
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Total Edits</th>
+                            <th>Unique Activities</th>
+                            <th>Activity Breakdown</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for file in file_analysis.top_files %}
+                        <tr>
+                            <td>{{ file.file_name }}</td>
+                            <td>{{ file.total_edits }}</td>
+                            <td>{{ file.unique_activities }}</td>
+                            <td>{{ file.activity_breakdown }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        
+        <!-- Preview table if available -->
+        {% if preview %}
+            <h2 class="mt-5">Data Preview (Top 5 Rows)</h2>
+            <div class="table-container">
+                {{ preview|safe }}
+            </div>
+        {% endif %}
+
+        <!-- Add this after the file analysis section -->
+        {% if download_links %}
+        <div class="row mt-4">
+            <h2>Process Mining Visualizations</h2>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Object-Centric Directly-Follows Graph (OCDFG)</h3>
+                    </div>
+                    <div class="card-body">
+                        <img src="data:image/png;base64,{{ ocdfg_data }}" class="img-fluid" alt="OCDFG">
+                        <p class="mt-2">
+                            <small class="text-muted">
+                                OCDFG shows the relationships between different activities in the repository, 
+                                with edge thickness indicating frequency of occurrence.
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Object-Centric Petri Net (OCPN)</h3>
+                    </div>
+                    <div class="card-body">
+                        <img src="data:image/png;base64,{{ ocpn_data }}" class="img-fluid" alt="OCPN">
+                        <p class="mt-2">
+                            <small class="text-muted">
+                                OCPN represents the process model of repository activities, 
+                                showing possible execution paths and dependencies.
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>
